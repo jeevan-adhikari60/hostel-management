@@ -17,7 +17,7 @@ export const sendMail = async (options) => {
   const recipients = Array.isArray(options.email) ? options.email.join(", ") : options.email;
 
   const mailOptions = {
-    from: "Bishal Timilsina <timilsina@gmail.com>",
+    from: "Jeevan Adhikari <jeevanbhai6676@gmail.com>",
     to: recipients,
     subject: options.subject,
     text: options.message,

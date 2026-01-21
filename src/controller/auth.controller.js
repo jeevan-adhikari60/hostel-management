@@ -21,7 +21,7 @@ export const registerUser = asyncHandler(async (req, res, next) => {
         password,
         confirmPassword,
         user_type,
-        phoneNumber
+        phone_number: phoneNumber
     } = req.body;
 
     if (!username || !email || !password || !confirmPassword || !user_type || !address || !phoneNumber) {
