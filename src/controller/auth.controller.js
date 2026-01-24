@@ -2,6 +2,7 @@ import User from "../model/user.model.js";
 import AppError from "../utlis/appError.js";
 import asyncHandler from "../utlis/catchAsync.js";
 import bcrypt from "bcryptjs";
+import { Op } from "sequelize";
 
 import { getDataUri } from "../utlis/dataUri.js";
 import cloudinary from "cloudinary";
@@ -40,8 +41,15 @@ export const registerUser = asyncHandler(async (req, res, next) => {
         ));
     }
 
-    const existingUser = await User.findOne({ where: { email } });
-    if (existingUser) {
+
+const existingUser = await User.findOne({
+  where: {
+    [Op.or]: [
+      { email: email },
+      { username: username }
+    ]
+  }
+});    if (existingUser) {
         return res.status(400).json({
             status: "failed",
             message: "User already exists",
@@ -80,6 +88,7 @@ export const registerUser = asyncHandler(async (req, res, next) => {
 
     res.status(201).json({
         status: "success",
+        message: "user registered successfully",
         data: {
             user,
             authToken: token
@@ -113,6 +122,7 @@ export const login = asyncHandler(async (req, res, next) => {
 
     res.status(200).json({
         status: "success",
+        message: "user login successfully",
         data: {
             user,
             authToken: token
@@ -129,35 +139,44 @@ export const logOut = asyncHandler(async (req, res) => {
 
     res.status(200).json({
         status: "success",
-        message: "Logged out successfully"
+        message: "User Logged out successfully"
     });
 });
 
-/* ================= UPDATE PROFILE ================= */
-export const updateMe = asyncHandler(async (req, res, next) => {
-    const updates = req.body;
-    const keys = Object.keys(updates);
+export  const updateProfile = asyncHandler(async (req, res, next) => {
+    const updates = req.body; // fields from body
+const keys = Object.keys(updates);
 
-    if (keys.length === 0) {
-        return next(new AppError('Please provide data to update', 400));
-    }
+if (keys.length === 0 && !req.file) {
+    return next(new AppError('Please provide data to update', 400));
+}
 
-    if (keys.includes("password") || keys.includes("user_type")) {
-        return next(new AppError('Cannot update password or role here', 400));
-    }
+// Prevent updating restricted fields
+if (keys.includes("password") || keys.includes("user_type")) {
+    return next(new AppError('Cannot update password or role here', 400));
+}
 
-    const user = await User.findByPk(req.user.userId);
-    if (!user) {
-        return next(new AppError('User not found', 404));
-    }
+const user = await User.findByPk(req.user.userId);
+if (!user) {
+    return next(new AppError('User not found', 404));
+}
 
-    await user.update(updates);
+// Handle file upload if provided
+if (req.file) {
+    const fileUri = getDataUri(req.file);
+    const upload = await cloudinary.uploader.upload(fileUri.content);
+    updates.profile_picture = upload.secure_url;
+}
 
-    res.status(200).json({
-        status: "success",
-        message: "Profile updated",
-        data: user
-    });
+// Update user
+await user.update(updates);
+
+res.status(200).json({
+    status: "success",
+    message: "Profile updated successfully",
+    data: user
+});
+
 });
 
 /* ================= GET OWN PROFILE ================= */
@@ -170,6 +189,7 @@ export const OwnDetail = asyncHandler(async (req, res, next) => {
 
     res.status(200).json({
         status: "success",
+        message: "successfully fetched user profile",
         data: user
     });
 });
@@ -251,5 +271,5 @@ export const resetPassword = asyncHandler(async (req, res) => {
     await user.save();
     
 
-    res.status(200).json({ message: "Password reset successful" });
+    res.status(200).json({ message: "Password reset successfully" });
 });

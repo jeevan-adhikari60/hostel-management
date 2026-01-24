@@ -3,8 +3,8 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import userRoute from "./routes/userroute.js";
-import cors from "cors";
 import { sequelize } from "./database.js";
+import roomRoute from "./routes/room.routes.js";
 dotenv.config();
 
 
@@ -31,7 +31,7 @@ const connectDB = async () => {
 
 connectDB();
 
-//sequelize.sync({ alter: true });
+// sequelize.sync({ alter: true });
 
 
 
@@ -43,6 +43,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", userRoute);
+app.use("/api/room", roomRoute);
 
 
 app.listen(3000, () => {
