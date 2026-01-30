@@ -6,6 +6,7 @@ import userRoute from "./routes/userroute.js";
 import { sequelize } from "./database.js";
 import roomRoute from "./routes/room.routes.js";
 import bookingRoute from "./routes/bookingRoutes.js";
+import diningRoute from "./routes/diningRoutes.js";
 dotenv.config();
 
 
@@ -32,7 +33,7 @@ const connectDB = async () => {
 
 connectDB();
 
-// sequelize.sync({ force: true });
+// sequelize.sync({ alter: true });
 
 
 
@@ -46,6 +47,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", userRoute);
 app.use("/api/room", roomRoute);
 app.use("/api/booking", bookingRoute);
+app.use("/api/dining", diningRoute);
 
 
 app.listen(3000, () => {
