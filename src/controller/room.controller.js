@@ -4,9 +4,6 @@ import AppError from "../utlis/appError.js";
 import { getDataUri } from "../utlis/dataUri.js";
 import cloudinary from "../utlis/cloudinary.js";
 
-/* CREATE ROOM (already fine) */
-
-
 /* CREATE ROOM WITH IMAGE UPLOAD */
 export const createRoom = asyncHandler(async (req, res, next) => {
   const { RoomNumber, Capacity, Status, Type, Description, Price, FloorNumber } = req.body;
@@ -86,7 +83,7 @@ export const getAllRoom = asyncHandler(async (req, res, next) => {
 });
 
 /* UPDATE ROOM */
-export const updateRoom = asyncHandler(async (req, res, next) => {
+export  const updateRoom = asyncHandler(async (req, res, next) => {
   const room = await Room.findByPk(req.params.id);
 
   if (!room) {

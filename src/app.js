@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 import userRoute from "./routes/userroute.js";
 import { sequelize } from "./database.js";
 import roomRoute from "./routes/room.routes.js";
+import bookingRoute from "./routes/bookingRoutes.js";
 dotenv.config();
 
 
@@ -31,7 +32,7 @@ const connectDB = async () => {
 
 connectDB();
 
-// sequelize.sync({ alter: true });
+// sequelize.sync({ force: true });
 
 
 
@@ -44,6 +45,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", userRoute);
 app.use("/api/room", roomRoute);
+app.use("/api/booking", bookingRoute);
 
 
 app.listen(3000, () => {
