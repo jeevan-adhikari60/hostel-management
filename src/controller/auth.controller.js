@@ -1,4 +1,9 @@
 import User from "../model/user.model.js";
+
+import Booking from '../model/bookingModel.js';
+import Room from '../model/room.model.js';
+
+
 import AppError from "../utlis/appError.js";
 import asyncHandler from "../utlis/catchAsync.js";
 import bcrypt from "bcryptjs";
@@ -193,6 +198,47 @@ export const OwnDetail = asyncHandler(async (req, res, next) => {
         data: user
     });
 });
+
+//get all users with their rooms aaafaile
+export const getUsersWithRooms = asyncHandler(async (req, res) => {
+
+    const users = await User.findAll({
+        where: {
+            user_type: "student"
+        },
+        include: [
+            {
+                model: Booking,
+                as: "bookings",
+                attributes: [
+                    "id",
+                    "userId",
+                    "roomId",
+                    "total_amount",
+                    "status"
+                ],
+                include: [
+                    {
+                        model: Room,
+                        as: "room",
+                        attributes: [
+                            "id",
+                            "RoomNumber",
+                            "Type",
+                            "Price"
+                        ]
+                    }
+                ]
+            }
+        ]
+    });
+
+    res.json(users);
+
+});
+
+
+
 
 /* ================= FORGOT PASSWORD ================= */
 export const handleForgotPassword = asyncHandler(async (req, res) => {

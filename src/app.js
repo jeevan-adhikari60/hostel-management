@@ -7,6 +7,11 @@ import { sequelize } from "./database.js";
 import roomRoute from "./routes/room.routes.js";
 import bookingRoute from "./routes/bookingRoutes.js";
 import diningRoute from "./routes/diningRoutes.js";
+
+import studentRoute from "./routes/studentRoute.js";
+
+import "./model/associations.js";
+
 dotenv.config();
 
 
@@ -48,6 +53,8 @@ app.use("/api/auth", userRoute);
 app.use("/api/room", roomRoute);
 app.use("/api/booking", bookingRoute);
 app.use("/api/dining", diningRoute);
+
+app.use("/api/students", studentRoute);
 
 
 app.listen(3000, () => {
